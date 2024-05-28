@@ -1,0 +1,137 @@
+<div
+    id="carouselExampleCaptions"
+    class="relative"
+    data-twe-carousel-init
+    data-twe-ride="carousel"
+>
+    <!--Carousel indicators-->
+    <div
+        class="absolute bottom-0 left-0 right-0 z-[2] mx-[15%] mb-4 flex list-none justify-center p-0"
+        data-twe-carousel-indicators
+    >
+        <% banner.forEach((index) => { %>
+        <button
+            type="button"
+            data-twe-target="#carouselExampleCaptions"
+            data-twe-slide-to="0"
+            data-twe-carousel-active
+            class="slide_btn mx-[3px] box-content h-[3px] w-[30px] flex-initial cursor-pointer border-0 border-y-[10px] border-solid border-transparent bg-white bg-clip-padding p-0 -indent-[999px] opacity-50 transition-opacity duration-[600ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] motion-reduce:transition-none"
+            aria-current="true"
+            aria-label="Slide 1"
+        ></button>
+        <%})%>
+    </div>
+
+    <!--Carousel items-->
+    <div
+        class="relative w-full overflow-hidden after:clear-both after:block after:content-['']"
+    >
+        <% banner.map((item, content, index) => {%>
+        <div
+            class="slide relative float-left -mr-[100%] hidden h-96 w-full overflow-hidden"
+        >
+            <img
+                src="<%= item.image %>"
+                class="block w-full h-full object-cover object-center"
+                alt="<%= item.content%>"
+            />
+            <div
+                class="absolute inset-x-[15%] bottom-5 hidden py-5 text-center text-white md:block"
+            >
+                <h5 class="text-xl"><%= item.content%></h5>
+                <p>
+                    Some representative placeholder content for the third slide.
+                </p>
+            </div>
+        </div>
+        <% }) %>
+    </div>
+
+    <!--Carousel controls - prev item-->
+    <button
+        class="absolute bottom-0 left-0 top-0 z-[1] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center text-white opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:text-white hover:no-underline hover:opacity-90 hover:outline-none focus:text-white focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
+        type="button"
+        onclick="controllSlide(-1, 'animate-faceleft')"
+    >
+        <span class="inline-block h-8 w-8">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="h-6 w-6"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
+            </svg>
+        </span>
+        <span
+            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+            >Previous</span
+        >
+    </button>
+    <!--Carousel controls - next item-->
+    <button
+        class="absolute bottom-0 right-0 top-0 z-[1] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center text-white opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:text-white hover:no-underline hover:opacity-90 hover:outline-none focus:text-white focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
+        type="button"
+        onclick="controllSlide(1, 'animate-faceright')"
+    >
+        <span class="inline-block h-8 w-8">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="h-6 w-6"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                />
+            </svg>
+        </span>
+        <span
+            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+            >Next</span
+        >
+    </button>
+</div>
+<script>
+    const slide = document.querySelectorAll(".slide");
+    const slideBtn = document.querySelectorAll(".slide_btn");
+    let index = 0;
+    slide[index].classList.remove("hidden");
+    slideBtn[index].classList.add("opacity-100");
+    const setShowSlide = (preview, current, animation) => {
+        slideBtn[current].classList.add("opacity-100");
+        slideBtn[preview].classList.remove("opacity-100");
+        slide[current].classList.add("z-20");
+        slide[current].classList.add(animation);
+        slide[current].classList.remove("hidden");
+        setTimeout(() => {
+            slide[current].classList.remove("z-20");
+            slide[current].classList.remove(animation);
+            slide[preview].classList.add("hidden");
+        }, 300);
+    };
+    const setIndex = (n, animation) => {
+        let prev = index;
+        index += n;
+        if (index >= slide.length) index = 0;
+        if (index < 0) index = slide.length - 1;
+        setShowSlide(prev, index, animation);
+    };
+    const autoNextSLide = setInterval(() => {
+        setIndex(1, "animate-faceright");
+    }, 5000);
+    const controllSlide = (n, animation) => {
+        clearInterval(autoNextSLide);
+        setIndex(n, animation);
+    };
+</script>
