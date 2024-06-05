@@ -13,16 +13,14 @@ const defaultBanner = [
     },
 ];
 
-const handleCreateBanner = async (req, res) => {
+const handleCreateBanner = async (image, content, startAt) => {
     try {
-        const { image, content, startDate, endDate } = req.body;
-        const data = await db.Banner.create({
+        await db.Banner.create({
             image: image,
             content: content,
-            startDate: new Date(startDate),
-            endDate: new Date(endDate),
+            startDate: new Date(),
+            endDate: new Date(startAt),
         });
-        res.send(data);
     } catch (error) {
         res.send("Something went wrong!");
     }
@@ -39,6 +37,7 @@ const handleGetBanner = async (req, res) => {
             //     //     [Op.gte]: new Date(),
             //     // },
             // },
+            order: [["startDate", "DESC"]],
         });
         let dataResponse = [];
         if (data.length > 0) {

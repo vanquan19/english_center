@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Class details</title>
+        <link rel="stylesheet" href="/App.css" />
+    </head>
+    <body>
+        <div class="w-full"><%- include('authHeader') -%></div>
+        <!--   Sidebar -->
+        <button
+            data-drawer-target="default-sidebar"
+            data-drawer-toggle="default-sidebar"
+            aria-controls="default-sidebar"
+            type="button"
+            onclick="document.getElementById('logo-sidebar').classList.toggle('-translate-x-full'); document.getElementById('fill_sidebar').classList.toggle('hidden')"
+            class="inline-flex z-20 items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        >
+            <span class="sr-only">Open sidebar</span>
+            <svg
+                class="w-6 h-6"
+                aria-hidden="true"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <path
+                    clip-rule="evenodd"
+                    fill-rule="evenodd"
+                    d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
+                ></path>
+            </svg>
+        </button>
+        <div
+            id="fill_sidebar"
+            onclick="document.getElementById('logo-sidebar').classList.toggle('-translate-x-full'); document.getElementById('fill_sidebar').classList.toggle('hidden')"
+            class="sm:hidde hidden z-10 fixed top-0 left-0 w-full h-full bg-gray-200 opacity-50"
+        ></div>
+        <aside
+            id="logo-sidebar"
+            class="fixed sm:block -translate-x-full top-0 left-0 z-20 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+            aria-label="Sidebar"
+        >
+            <div
+                class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800"
+            >
+                <ul class="space-y-2 font-medium">
+                    <li>
+                        <span
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white"
+                        >
+                            <%= dataClass.name %> - Khóa <%= dataClass.year%>
+                        </span>
+                    </li>
+
+                    <li>
+                        <a
+                            href="/class-infomation/<%= dataClass.id %>"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 dark:group-hover:text-white"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
+                                />
+                            </svg>
+
+                            <span class="flex-1 ms-3 whitespace-nowrap"
+                                >Thông tin lớp học
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="/class-management-calendar?id=<%= dataClass.id %>"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 dark:group-hover:text-white"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"
+                                />
+                            </svg>
+
+                            <span class="flex-1 ms-3 whitespace-nowrap"
+                                >Lịch học
+                            </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="/class-detail/<%= dataClass.id %>"
+                            class="flex items-center bg-gray-200/90 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="flex-shrink-0 w-5 h-5 text-primary-600 transition duration-75 dark:text-gray-400 dark:group-hover:text-white"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+                                />
+                            </svg>
+
+                            <span
+                                class="flex-1 ms-3 whitespace-nowrap text-primary-600"
+                                >Danh sách lớp ( <%= students.length %> )
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="p-4 sm:ml-64">
+            <div
+                class="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border"
+            >
+                <table class="w-full text-left table-auto min-w-max">
+                    <thead>
+                        <tr>
+                            <th
+                                class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"
+                            >
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70"
+                                >
+                                    MSV
+                                </p>
+                            </th>
+                            <th
+                                class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"
+                            >
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70"
+                                >
+                                    Họ tên
+                                </p>
+                            </th>
+                            <th
+                                class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"
+                            >
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70"
+                                >
+                                    Ngày sinh
+                                </p>
+                            </th>
+                            <th
+                                class="p-4 border-b border-blue-gray-100 bg-blue-gray-50 hidden tb:table-cell"
+                            >
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70"
+                                >
+                                    email
+                                </p>
+                            </th>
+                            <th
+                                class="p-4 border-b border-blue-gray-100 bg-blue-gray-50 hidden tb:table-cell"
+                            >
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70"
+                                >
+                                    Địa chỉ
+                                </p>
+                            </th>
+                            <th
+                                class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"
+                            >
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70"
+                                ></p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% students.map((student) => { %>
+                        <tr>
+                            <td class="p-4">
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"
+                                >
+                                    <%= student.id %>
+                                </p>
+                            </td>
+                            <td class="p-4">
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"
+                                >
+                                    <%= student.firstname %> <%=
+                                    student.lastname %>
+                                </p>
+                            </td>
+                            <td class="p-4">
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"
+                                >
+                                    <%= student.birthday %>
+                                </p>
+                            </td>
+                            <td class="p-4 hidden tb:table-cell">
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"
+                                >
+                                    <%= student.email %>
+                                </p>
+                            </td>
+                            <td class="p-4 hidden tb:table-cell">
+                                <p
+                                    class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"
+                                >
+                                    <%= student.address %>
+                                </p>
+                            </td>
+                            <td class="p-4">
+                                <a
+                                    href="#"
+                                    class="block font-sans text-sm antialiased font-medium leading-normal text-blue-gray-900"
+                                >
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                        <%})%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script src="/script.js"></script>
+    </body>
+</html>

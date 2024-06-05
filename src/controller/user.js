@@ -14,23 +14,7 @@ const comparePassword = async (password, userPassword) => {
         return false;
     }
 };
-const checkAuthentization = async (req, res, next) => {
-    try {
-        const data = await db.Session.findOne({
-            where: {
-                id: req.sessionID,
-            },
-        });
-        if (data) {
-            next();
-        } else {
-            res.redirect("/login");
-        }
-    } catch (error) {
-        console.log(error);
-        res.send("Something went wrong!");
-    }
-};
+
 const handleAuthentication = async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -55,7 +39,7 @@ const handleAuthentication = async (req, res) => {
                 data: JSON.stringify(req.session.isAuth),
             });
             if (users.role == "R0") {
-                res.redirect("/admin");
+                res.redirect("/");
             } else if (users.role == "R1") {
                 res.redirect("/teacher");
             } else if (users.role == "R2") {
@@ -81,13 +65,59 @@ const handleLogout = async (req, res) => {
             },
         });
         req.session.destroy();
-        res.redirect("/");
+        res.redirect("/home");
     } catch (error) {
         console.log(error);
         res.send("Something went wrong!");
     }
 };
-const handleCreateeUser = async (req, res) => {
+
+const handleRegister = async (req, res) => {
+    try {
+        const {
+            firstname,
+            lastname,
+            username,
+            password,
+            email,
+            phone,
+            address,
+        } = req.body;
+        if (
+            !firstname ||
+            !lastname ||
+            !username ||
+            !password ||
+            !email ||
+            !phone
+        ) {
+            res.send("Missing required field");
+        }
+        const hash = await hashPassword(password);
+        const data = await db.User.create({
+            firstname,
+            lastname,
+            username,
+            email,
+            phone,
+            password: hash,
+            address,
+            role: "R3",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        });
+        if (!data) {
+            res.redirect("/register");
+            return res.send("Something went wrong!");
+        }
+        res.redirect("/login");
+        return res.send("Register successfully!");
+    } catch (error) {
+        res.redirect("/register");
+        return res.send("Sthing went wrong!");
+    }
+};
+const handleCreateUser = async (req, res) => {
     try {
         const {
             firstname,
@@ -228,6 +258,6 @@ const handleCreateeUser = async (req, res) => {
 module.exports = {
     handleAuthentication,
     handleLogout,
-    checkAuthentization,
     hashPassword,
+    handleRegister,
 };

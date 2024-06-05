@@ -2,13 +2,23 @@ const express = require("express");
 const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config();
+const multer = require("multer");
+const bodyParser = require("body-parser");
 const configViews = require("./src/config/view-engine.js");
 const connectionDB = require("./src/config/database.js");
 const { sessionStore } = require("./src/config/database.js");
-const { initUserroutes, initPage } = require("./src/routes/userRoutes.js");
+const {
+    initPage,
+    initRouteAdmin,
+    initUserRoutes,
+} = require("./src/routes/routes.js");
 const session = require("express-session");
+
+//init PORT
 const PORT = process.env.PORT || 3060;
 const app = express();
+
+//use express session
 app.use(
     session({
         secret: process.env.SECRET || "your_secret_key",
@@ -21,14 +31,27 @@ app.use(
         },
     })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
-connectionDB();
-configViews(app);
-initPage(app);
-initUserroutes(app);
 
+//parser data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+
+//parser file
+const upload = multer();
+
+//connect db
+connectionDB();
+
+//config view engine
+configViews(app);
+
+//init routes
+initPage(app);
+initRouteAdmin(app, upload);
+initUserRoutes(app);
+
+//running app
 app.listen(PORT, () => {
     console.log("App is running on port", PORT);
 });

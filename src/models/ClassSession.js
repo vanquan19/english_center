@@ -22,11 +22,13 @@ module.exports = (sequelize, DataTypes) => {
             },
             classID: DataTypes.INTEGER,
             date: DataTypes.DATE,
+            shift: DataTypes.STRING,
         },
         {
             sequelize,
             tableName: "ClassSessions",
             modelName: "ClassSession",
+            timestamps: false,
         }
     );
     return ClassSession;

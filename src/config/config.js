@@ -7,6 +7,10 @@ const config = {
         database: process.env.DB_DATABASE,
         host: process.env.DB_HOST || "localhost",
         dialect: "mysql",
+        query: {
+            raw: true,
+        },
+        logging: false,
     },
     test: {
         username: process.env.DB_USERNAME || "root",
@@ -14,6 +18,10 @@ const config = {
         database: process.env.DB_DATABASE,
         host: process.env.DB_HOST || "localhost",
         dialect: "mysql",
+        query: {
+            raw: true,
+        },
+        logging: false,
     },
     production: {
         username: process.env.DB_USERNAME || "root",
@@ -21,6 +29,10 @@ const config = {
         database: process.env.DB_DATABASE,
         host: process.env.DB_HOST || "localhost",
         dialect: "mysql",
+        query: {
+            raw: true,
+        },
+        logging: false,
     },
 };
 module.exports = config;

@@ -28,7 +28,7 @@
     >
         <% banner.map((item, content, index) => {%>
         <div
-            class="slide relative float-left -mr-[100%] hidden h-96 w-full overflow-hidden"
+            class="slide relative float-left -mr-[100%] hidden w-full tb:max-h-[620px] md:max-h-[410px] max-h-[250px] overflow-hidden"
         >
             <img
                 src="<%= item.image %>"
@@ -39,9 +39,6 @@
                 class="absolute inset-x-[15%] bottom-5 hidden py-5 text-center text-white md:block"
             >
                 <h5 class="text-xl"><%= item.content%></h5>
-                <p>
-                    Some representative placeholder content for the third slide.
-                </p>
             </div>
         </div>
         <% }) %>

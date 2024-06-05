@@ -23,6 +23,10 @@ module.exports = {
                 type: DataTypes.DATE,
                 allowNull: false,
             },
+            shift: {
+                type: DataTypes.STRING(50),
+                allowNull: false,
+            },
         });
     },
     async down(queryInterface, Sequelize) {
