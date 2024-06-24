@@ -21,7 +21,7 @@
 2. **Chuyển vào thư mục dự án:**
 
     ```sh
-    cd project-name
+    cd english_center
     ```
 
 3. **Cài đặt các gói cần thiết:**
