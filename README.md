@@ -34,13 +34,10 @@
 
 Tạo file `.env` trong thư mục gốc của dự án và thêm các biến môi trường cần thiết. Ví dụ:
 
-    ```env
-    PORT=3000
-    DB_HOST=localhost
-    DB_USER=root
-    DB_PASS=s1mpl3
-    ```
-
+(Thêm file env gửi riêng)
+## Import database
+Tạo database englishcenter trong xampp
+sau đó vào mục import, thêm file có đuôi sql vào và nhập
 ## Chạy dự án
 
 1. **Khởi động server:**
@@ -70,13 +67,10 @@ Tạo file `.env` trong thư mục gốc của dự án và thêm các biến m�
 
 ## Scripts
 
-- `npm start`: Chạy ứng dụng ở môi trường production.
-- `npm run dev`: Chạy ứng dụng ở môi trường development với [nodemon](https://nodemon.io/).
+- `npm start`: Chạy ứng dụng ở môi trường nodemon
 
-## Công nghệ sử dụng
 
-- [Express](https://expressjs.com/): Framework cho Node.js
-- [dotenv](https://github.com/motdotla/dotenv): Quản lý biến môi trường
+
 
 ## Ghi chú
 
@@ -90,8 +84,4 @@ Tạo file `.env` trong thư mục gốc của dự án và thêm các biến m�
 
 
 
-## Liên hệ
 
-Nếu bạn có bất kỳ câu hỏi hoặc vấn đề nào, vui lòng mở một [issue](https://github.com/username/project-name/issues).
-
-Cảm ơn bạn đã sử dụng dự án của chúng tôi!
