@@ -4,7 +4,11 @@
 ## Yêu cầu
 
 - [Node.js](https://nodejs.org/en/blog/release/v20.9.0) (v20.9.0)
-- [npm](https://www.npmjs.com/)  (9.8.1) 
+- [npm](https://www.npmjs.com/)  (9.8.1)
+
+- Kiểm tra phiên bản truy cập cmd sau đó thực hiện lệnh
+  node -v
+  npm -v
 
 ## Cài đặt
 
