@@ -11,7 +11,7 @@
 1. **Clone repository này về máy của bạn:**
 
     ```sh
-    git clone https://github.com/username/project-name.git
+    git clone https://github.com/vanquan19/english_center.git
     ```
 
 2. **Chuyển vào thư mục dự án:**
