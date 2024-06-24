@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            Attendance.belongsTo(models.ClassSession, {
+                foreignKey: "classSessionID",
+                as: "classSession",
+            });
+            Attendance.belongsTo(models.Student, {
+                foreignKey: "studentID",
+                as: "student",
+            });
         }
     }
     Attendance.init(
@@ -26,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             sequelize,
+            timestamps: false,
             tableName: false,
             modelName: "Attendance",
             tableName: "Attendances",

@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            Parent.belongsTo(models.User, {
+                foreignKey: "userID",
+                as: "user",
+            });
+            Parent.hasMany(models.Student, {
+                foreignKey: "parentID",
+                as: "students",
+            });
         }
     }
     Parent.init(
@@ -20,7 +28,13 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true,
             },
-            userID: DataTypes.INTEGER,
+            userID: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Users",
+                    key: "id",
+                },
+            },
             zalo: DataTypes.STRING,
         },
         {

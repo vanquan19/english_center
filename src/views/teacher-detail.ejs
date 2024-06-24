@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Thông tin giáo viên</title>
+        <link rel="stylesheet" href="App.css" />
+    </head>
+    <body>
+        <div>
+            <%- include('sidebar') %>
+            <div class="sm:ml-64">
+                <%- include('navbar-admin') %>
+                <div class="p-4 b rounded-lg dark:border-gray-700">
+                    <div class="flex gap-8 justify-between md:flex-row flex-col space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
+                        <div class="w-full sm:mx-0 mx-auto  max-w-md h-fit md:p-8 p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                            <div class="flex flex-col items-center pb-10">
+                                <img class="w-32 h-32 mb-3 rounded-full shadow-lg" src="/images/default-avatar.webp" alt="Bonnie image" />
+                                <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white"><%= teacher['user.firstname'] + " " + teacher['user.lastname'] %></h5>
+                                <span class="text-sm text-gray-500 dark:text-gray-400"><%= teacher['user.email'] %></span>
+                            </div>
+                            <div class="flex flex-col items-start pb-10">
+                                <h6 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Số điện thoại: <span class="text-gray-700 font-normal"><%= teacher['user.phone'] %></span></h6>
+                                <h6 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Ngày sinh: <span class="text-gray-700 font-normal"><%= teacher['user.birthday'] %></span></h6>
+                                <h6 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Địa chỉ: <span class="text-gray-700 font-normal"><%= teacher['user.address'] %></span></h6>
+                                <h6 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">
+                                    Giới tính: <span class="text-gray-700 font-normal"><%= teacher['user.gender'] === null ? 'Không xác định' : (teacher['user.gender'] ? 'Nam' : 'Nữ') %></span>
+                                </h6>
+                                <h6 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Phụ trách lớp: 
+                                    <span class="text-gray-700 font-normal"><%= classOfTeacher?.name ? classOfTeacher.name : "Chưa phụ trách"  %></span>
+                                 </h6>
+                            </div>
+                        </div>
+                        <div class="w-full px-8">
+                            <form id="form_create-teacher" method="post" action="/update-user" class="w-full md:mt-0 px-6 pb-6 tb:pb-8 flex flex-col gap-6">
+                                <div class="flex flex-col w-full justify-between gap-6">
+                                    <div class="space-y-4 md:space-y-6 w-full">
+                                        <div class="space-y-4 md:space-y-6">
+                                            <div class="gap-2 justify-between hidden">
+                                                <div class="w-full relative">
+                                                    <label for="role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Chức vụ <span class="text-red-500">*</span></label>
+                                                    <input
+                                                        type="role"
+                                                        name="role"
+                                                        id="role"
+                                                        value="R1"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="R1" />
+                                                    <span class="text-red-500 text-sm error absolute top-full"></span>
+                                                </div>
+                                                <div class="w-full relative">
+                                                    <label for="id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Chức vụ <span class="text-red-500">*</span></label>
+                                                    <input
+                                                        type="id"
+                                                        name="id"
+                                                        id="id"
+                                                        value="<%= teacher['id'] %>"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="R1" />
+                                                    <span class="text-red-500 text-sm error absolute top-full"></span>
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-2 justify-between">
+                                                <div class="w-full relative">
+                                                    <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Họ <span class="text-red-500">*</span></label>
+                                                    <input
+                                                        type="text"
+                                                        name="firstname"
+                                                        id="firstname"
+                                                        value="<%= teacher['user.firstname'] %>"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="Nguyễn Văn" />
+                                                    <span class="text-red-500 text-sm error absolute top-full"></span>
+                                                </div>
+                                                <div class="w-full relative">
+                                                    <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tên <span class="text-red-500">*</span></label>
+                                                    <input
+                                                        id="lastname"
+                                                        name="lastname"
+                                                        value="<%= teacher['user.lastname'] %>"
+                                                        type="text"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="A" />
+                                                    <span class="text-red-500 text-sm error absolute top-full"></span>
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-2 justify-between">
+                                                <div class="w-full relative">
+                                                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email <span class="text-red-500">*</span></label>
+                                                    <input
+                                                        type="email"
+                                                        name="email"
+                                                        value="<%= teacher['user.email'] %>"
+                                                        id="email"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="abc@example.xyz" />
+                                                    <span class="text-red-500 text-sm error absolute top-full"></span>
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-2 justify-between">
+                                                <div class="w-full relative">
+                                                    <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Số điện thoại <span class="text-red-500">*</span></label>
+                                                    <input
+                                                        type="text"
+                                                        name="phone"
+                                                        value="<%= teacher['user.phone'] %>"
+                                                        id="phone"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="0379***8987" />
+                                                    <span class="text-red-500 text-sm error absolute top-full"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex gap-2 justify-between">
+                                                <div class="w-full">
+                                                    <label for="birthday" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ngày sinh</label>
+                                                    <input
+                                                        type="date"
+                                                        name="birthday"
+                                                        value="<%= teacher['user.birthday'] %>"
+                                                        id="birthday"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-[9px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                                </div>
+                                                <div class="w-full">
+                                                    <label for="gender" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Giới tính</label>
+                                                    <select
+                                                        type="text"
+                                                        name="gender"
+                                                        id="gender"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="100000000">
+                                                        <option value="">--Chọn giới tính--</option>
+                                                        <option value="1" <%= teacher['user.gender'] == 1 ? 'selected' : '' %>>Nam</option>
+                                                        <option value="0" <%= teacher['user.gender'] == 0 ? 'selected' : '' %>>Nữ</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-2 justify-between">
+                                                <div class="w-full">
+                                                    <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Địa chỉ</label>
+                                                    <input
+                                                        type="text"
+                                                        name="address"
+                                                        id="address"
+                                                        value="<%= teacher['user.address'] %>"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="phường/xã, quận/huyện, tỉnh/thành phố" />
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-2 justify-between">
+                                                <div class="w-full">
+                                                    <label for="classID" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Chọn lớp học</label>
+                                                    <select
+                                                        name="classID"
+                                                        id="classID"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="100000000">
+                                                        <% listClass.forEach(function(item) { %>
+                                                        <option value="<%= item.id ? item.id : '' %>"><%= item.id ? item.name + "-" + item.year : '--Lớp học--'%></option>
+                                                        <% }); %>
+                                                    </select>
+                                                </div>
+                                                <div class="w-full">
+                                                    <label for="salary" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Lương/Buổi</label>
+                                                    <input
+                                                        type="text"
+                                                        name="salary"
+                                                        id="salary"
+                                                        value="<%= teacher['salary'] %>"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="5000000" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button
+                                    type="submit"
+                                    class="w-full text-white bg-primary-500 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                    Xác nhận
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('alert') %>
+        <script src="script.js"></script>
+        <script src="/script/validator.js"></script>
+        <script>
+            const validate = new Validator();
+            validate.init({
+                form: '#form_create-teacher',
+                rules: [
+                validate.isRequired('#firstname'),
+                    validate.isRequired('#lastname'),
+                    validate.isEmail('#email'),
+                    validate.isRequired('#email'),
+                    validate.isRequired('#phone'),
+                ]
+            })
+        </script>
+    </body>
+</html>

@@ -11,8 +11,15 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            Teacher.belongsTo(models.User, {
+                foreignKey: "userID",
+                as: "user",
+            });
+            Teacher.hasMany(models.Class, {
+                foreignKey: "teacherID",
+                as: "class",
+            });
         }
-        sta;
     }
     Teacher.init(
         {
@@ -21,7 +28,13 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true,
             },
-            userID: DataTypes.INTEGER,
+            userID: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Users",
+                    key: "id",
+                },
+            },
             salary: DataTypes.FLOAT,
             teached: DataTypes.INTEGER,
             paidSalaryDate: DataTypes.DATE,

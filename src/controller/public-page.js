@@ -1,17 +1,18 @@
 const { handleGetBanner } = require("./banner");
-const { handleGetClass } = require("./class");
 
 const HomePage = async (req, res) => {
     const banner = await handleGetBanner();
-    res.render("index", { banner: banner });
+    res.render("home", { banner: banner });
 };
 
 const LoginPage = (req, res) => {
-    res.render("login");
+    const alert = { ...req.session.alert };
+    req.session.alert = null;
+    res.render("login", { alert, alert });
 };
 
 const RegisterPage = (req, res) => {
-    res.render("register-form");
+    res.render("register");
 };
 
 module.exports = {

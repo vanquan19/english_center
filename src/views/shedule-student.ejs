@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lịch học - Trung tâm tiếng anh</title>
+        <link rel="stylesheet" href="App.css" />
+    </head>
+    <body>
+        <div class="app">
+            <%- include('header') %>
+            <div class="mt-20 mb-0 px-12 relative"><%- include('client-calendar') %></div>
+            <div class="grid grid-cols-5 lg:px-44 px-16 mt-4">
+                <div class="flex col-span-5 w-full flex-col my-8">
+                    <div class="relative overflow-x-auto w-full mx-auto">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs bg-primary-600 text-white uppercase dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 border">Ngày</th>
+                                    <th scope="col" class="px-6 py-3 border">Ca học</th>
+                                    <th scope="col" class="px-6 py-3 border">Lớp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% classSession.forEach((item) => { %>
+                                <tr class="bg-white dark:bg-gray-800">
+                                    <th scope="row" class="px-6 py-4 border font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <%= item.date.getDate() %> - <%= item.date.getMonth() %> - <%= item.date.getFullYear() %>
+                                    </th>
+                                    <td class="px-6 py-4 border"><%= item.shift %></td>
+                                    <td class="px-6 py-4 border"><%= item['class.name'] %> - <%= item['class.year'] %></td>
+                                </tr>
+
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <%- include('footer') %>
+        </div>
+        <script src="/script.js"></script>
+        <script src="/script/calendar.js"></script>
+    </body>
+</html>

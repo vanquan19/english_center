@@ -19,15 +19,16 @@ module.exports = {
                 type: DataTypes.FLOAT,
                 defaultValue: 0,
             },
-            outDate: {
-                type: DataTypes.DATE,
-                allowNull: false,
-            },
             paidDate: {
                 type: DataTypes.DATE,
             },
-            discount: {
-                type: DataTypes.FLOAT,
+            monthOfYear: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            year: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
             },
             studentID: {
                 type: DataTypes.INTEGER,
@@ -36,6 +37,14 @@ module.exports = {
                     model: "Students",
                     key: "id",
                 },
+            },
+            createdAt: {
+                type: DataTypes.DATE,
+                allowNull: false,
+            },
+            updatedAt: {
+                type: DataTypes.DATE,
+                allowNull: false,
             },
         });
     },

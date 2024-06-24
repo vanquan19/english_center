@@ -1,3 +1,5 @@
+const { he } = require("date-fns/locale");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: ["./src/views/*.ejs"],
@@ -41,6 +43,22 @@ module.exports = {
                     "0%": { opacity: 1, transform: "translateY(0)" },
                     "100%": { opacity: 0, transform: "translateY(20px)" },
                 },
+                facetable: {
+                    "0%": { transform: "scale(0.8)" },
+                    "100%": { transform: "scale(1)" },
+                },
+                scrollDown: {
+                    "0%": { height: "0" },
+                    "100%": { height: "100%" },
+                },
+                scrollUp: {
+                    "0%": { height: "100%" },
+                    "100%": { height: "0" },
+                },
+                marquee: {
+                    "0%": { "text-indent": "100%" },
+                    "100%": { "text-indent": "-100%" },
+                },
             },
             animation: {
                 faceright: "faceright 0.3s linear",
@@ -50,6 +68,20 @@ module.exports = {
                 hiddenScaleY: "hiddenScaleY 0.3s linear",
                 facein: "facein 0.3s linear",
                 hiddenout: "hiddenout 0.3s linear",
+                scaletable: "facetable 0.3s linear",
+                scrollDown: "scrollDown 0.3s linear",
+                scrollUp: "scrollUp 0.3s linear",
+                marquee: "marquee 20s linear infinite",
+            },
+            scrollbar: {
+                hide: {
+                    /* Ẩn thanh cuộn ngang và dọc */
+                    "&::-webkit-scrollbar": { display: "none" },
+                    "&": {
+                        "scrollbar-width": "none",
+                        "-ms-overflow-style": "none",
+                    },
+                },
             },
         },
         screens: {
@@ -69,6 +101,18 @@ module.exports = {
             "2xl": "1536px",
             // => @media (min-width: 1536px) { ... }
         },
-        plugins: [],
+        plugins: [
+            function ({ addUtilities }) {
+                addUtilities({
+                    ".scrollbar-hide": {
+                        "&::-webkit-scrollbar": { display: "none" },
+                        "&": {
+                            "scrollbar-width": "none",
+                            "-ms-overflow-style": "none",
+                        },
+                    },
+                });
+            },
+        ],
     },
 };

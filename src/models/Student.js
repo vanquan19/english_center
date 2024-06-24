@@ -11,6 +11,22 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            Student.belongsTo(models.User, {
+                foreignKey: "userID",
+                as: "user",
+            });
+            Student.belongsTo(models.Parent, {
+                foreignKey: "parentID",
+                as: "parent",
+            });
+            Student.belongsTo(models.Class, {
+                foreignKey: "classID",
+                as: "classes",
+            });
+            Student.hasMany(models.Attendance, {
+                foreignKey: "studentID",
+                as: "attendances",
+            });
         }
     }
     Student.init(
@@ -20,9 +36,32 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true,
             },
-            userID: DataTypes.INTEGER,
-            parentID: DataTypes.INTEGER,
-            classID: DataTypes.INTEGER,
+            userID: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Users",
+                    key: "id",
+                },
+            },
+            parentID: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Parents",
+                    key: "id",
+                },
+            },
+            classID: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Classes",
+                    key: "id",
+                },
+            },
+            discount: {
+                type: DataTypes.FLOAT,
+                defaultValue: 0,
+                notNull: true,
+            },
         },
         {
             sequelize,

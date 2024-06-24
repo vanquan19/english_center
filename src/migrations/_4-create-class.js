@@ -22,6 +22,9 @@ module.exports = {
             startAt: {
                 type: DataTypes.DATE,
             },
+            endAt: {
+                type: DataTypes.DATE,
+            },
             status: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 0,
@@ -35,6 +38,14 @@ module.exports = {
                     model: "Teachers",
                     key: "id",
                 },
+            },
+            createdAt: {
+                type: DataTypes.DATE,
+                defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+            },
+            updatedAt: {
+                type: DataTypes.DATE,
+                defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
             },
         });
     },

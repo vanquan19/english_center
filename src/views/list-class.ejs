@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Quản lý lớp học - Trung tâm tiếng anh</title>
+        <link rel="stylesheet" href="/App.css" />
+    </head>
+    <body>
+        <div>
+            <%- include('sidebar') %>
+            <div class="sm:ml-64">
+                <%- include('navbar-admin') %>
+                <div class="p-4 relative border-gray-200 rounded-lg dark:border-gray-700">
+                    <div class="flex gap-4 items-center flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
+                        <div class="flex gap-4 ml-auto">
+                            <label for="table-search" class="sr-only">Search</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    </svg>
+                                </div>
+                                <input
+                                    type="text"
+                                    id="table-search-users"
+                                    class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Search for users" />
+                            </div>
+
+                            <button
+                                type="button"
+                                onclick="handleOpen('modal_create-class', 'animate-faceright', 'animate-hiddenright', 400)"
+                                class="flex gap-2 py-2 leading-6 align-middle text-white bg-primary-600 hover:scale-105 hover:bg-primary-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+
+                                Thêm Lớp học
+                            </button>
+                        </div>
+                    </div>
+                    <div class="relative p-4 overflow-x-auto shadow-md sm:rounded-lg">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Tên lớp học</th>
+                                    <th scope="col" class="px-6 py-3">Năm học</th>
+                                    <th scope="col" class="px-6 py-3">Trạng thái</th>
+                                    <th scope="col" class="px-6 py-3">Ngày bắt đầu</th>
+                                    <th scope="col" class="px-6 py-3">Giáo viên</th>
+                                    <th scope="col" class="px-6 py-3">Số học sinh</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% _class.forEach((item) => { %>
+                                <tr
+                                    onclick="window.location.href = '/class-detail?id=<%= item.id%>'"
+                                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"><%= item.name %></th>
+                                    <td class="px-6 py-4"><%= item.year %></td>
+                                    <td class="px-6 py-4"><%= item.status ? "Đang mở" : "Đã đóng" %></td>
+                                    <td class="px-6 py-4"><%= item.startAt.getMonth() %> - <%= item.startAt.getDate() %> - <%= item.startAt.getFullYear() %></td>
+                                    <td class="px-6 py-4"><%= item.teacherID ? item['teacher.user.firstname'] + " " + item['teacher.user.lastname'] : 'Giảng viên mời' %></td>
+                                    <td class="px-6 py-4"><%= item.numStudent %></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                        <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
+                            <span></span>
+                            <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+                                <li>
+                                    <a
+                                        href="/class-management?page=<%=currentPage-1 %>"
+                                        class="<%= currentPage === 1 ? 'pointer-events-none opacity-80' : '' %> flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                        >Previous</a
+                                    >
+                                </li>
+                                <% for(let i = 1; i <= totalPage; i++){%>
+                                <li>
+                                    <a
+                                        href="/class-management?page=<%= i%>"
+                                        class="<%= i === currentPage ? 'text-primary-600' : 'text-gray-500' %> flex items-center justify-center px-3 h-8 leading-tight bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                        ><%=i%></a
+                                    >
+                                </li>
+                                <%}%>
+                                <li>
+                                    <a
+                                        href="/class-management?page=<%= currentPage + 1%>"
+                                        class="<%= currentPage >= totalPage ? 'pointer-events-none opacity-80': '' %> flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                        >Next</a
+                                    >
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div id="modal_create-class" data-open="false" class="fixed hidden overflow-y-scroll top-20 h-[88vh] right-0 bg-gray-50 z-40 shadow-lg rounded-md">
+                        <form id="form_create-class" method="post" action="/create-class" enctype="multipart/form-data" class="w-full md:mt-0 tb:px-8 px-6 pb-6 tb:pb-8">
+                            <div class="flex flex-col w-full justify-between gap-6 py-6 md:py-8">
+                                <div class="space-y-4 md:space-y-6 w-full">
+                                    <div class="flex justify-between">
+                                        <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">Thêm lớp học</h1>
+                                        <button
+                                            type="button"
+                                            onclick="handleOpen('modal_create-class', 'animate-faceright', 'animate-hiddenright', 300)"
+                                            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="space-y-4 md:space-y-6">
+                                        <div class="flex gap-2 justify-between">
+                                            <div class="w-full">
+                                                <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tên lớp học <span class="text-red-500">*</span></label>
+                                                <input
+                                                    type="text"
+                                                    name="name"
+                                                    id="name"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                    placeholder="Lớp A" />
+                                                <span class="text-red-500 text-sm error"></span>
+                                            </div>
+                                            <div class="w-full">
+                                                <label for="years" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Năm học <span class="text-red-500">*</span></label>
+                                                <select
+                                                    id="years"
+                                                    name="year"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                                    <option value="2024" selected>2024</option>
+                                                    <option value="2025">2025</option>
+                                                    <option value="2026">2026</option>
+                                                    <option value="2027">2027</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-2 justify-between">
+                                            <div class="w-full">
+                                                <label for="startAt" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ngày bắt đầu <span class="text-red-500">*</span></label>
+                                                <input
+                                                    type="date"
+                                                    name="startAt"
+                                                    id="startAt"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-[9px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                                <span class="text-red-500 text-sm error"></span>
+                                            </div>
+                                            <div class="w-full">
+                                                <label for="price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Học phí <span class="text-red-500">*</span></label>
+                                                <input
+                                                    type="text"
+                                                    name="price"
+                                                    id="price"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                    placeholder="100000000" />
+                                                <span class="text-red-500 text-sm error"></span>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div class="flex gap-2 justify-between">
+                                            <div class="w-full">
+                                                <label for="banner" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ảnh quảng cáo</label>
+                                                <input
+                                                    type="file"
+                                                    name="image"
+                                                    id="banner"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-[7.5px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                            </div>
+                                            <div class="w-full">
+                                                <label for="=content-banner" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nội dung</label>
+                                                <input
+                                                    type="text"
+                                                    name="content"
+                                                    id="=content-banner"
+                                                    placeholder="Nhập nội dung quảng cáo"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-4 md:space-y-6 w-full">
+                                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">Lịch học</h1>
+                                    <div class="flex gap-2 justify-between">
+                                        <div class="flex flex-col justify-between gap-2 w-full">
+                                            <div class="w-full">
+                                                <label for="endDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ngày kết thúc</label>
+                                                <input
+                                                    type="date"
+                                                    name="endDate"
+                                                    id="endDate"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-[9px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                            </div>
+                                            <div class="w-full">
+                                                <p class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Giờ học</p>
+                                                <ul class="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="first-shift"
+                                                                type="radio"
+                                                                value="07:00 - 09:30"
+                                                                name="shift"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="first-shift" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">07:00 - 09:30</label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="second-shift"
+                                                                type="radio"
+                                                                value="09:30 - 12:00"
+                                                                name="shift"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="second-shift" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">09:30 - 12:00</label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="third-shift"
+                                                                type="radio"
+                                                                value="14:00 - 16:30"
+                                                                name="shift"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="third-shift" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">14:00 - 16:30</label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="fourth-shift"
+                                                                type="radio"
+                                                                value="18:00 - 20:30"
+                                                                name="shift"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="fourth-shift" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">18:00 - 20:30</label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="fifth-shift"
+                                                                type="radio"
+                                                                value="20:30 - 23:00"
+                                                                name="shift"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="fifth-shift" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">20:30 - 23:00</label>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col gap-2 w-full">
+                                            <div class="w-full">
+                                                <p class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ngày học</p>
+                                                <ul class="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="monday"
+                                                                type="checkbox"
+                                                                value="1"
+                                                                name="day"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="monday" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Thứ hai</label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="tuesday"
+                                                                type="checkbox"
+                                                                value="2"
+                                                                name="day"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="tuesday" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Thứ ba</label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="wednesday"
+                                                                type="checkbox"
+                                                                value="3"
+                                                                name="day"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="wednesday" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Thứ tư</label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="thursday"
+                                                                type="checkbox"
+                                                                value="4"
+                                                                name="day"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="thursday" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Thứ năm</label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="friday"
+                                                                type="checkbox"
+                                                                value="5"
+                                                                name="day"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="friday" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Thứ sáu</label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="saturday"
+                                                                type="checkbox"
+                                                                value="6"
+                                                                name="day"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="saturday" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Thứ bảy</label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                                        <div class="flex items-center ps-3">
+                                                            <input
+                                                                id="sunday"
+                                                                type="checkbox"
+                                                                value="0"
+                                                                name="day"
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500" />
+                                                            <label for="sunday" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Chủ nhật</label>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                class="w-full text-white bg-primary-500 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                Xác nhận
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/script/_class.js"></script>
+        <script src="/script.js"></script>
+        <script src="/script/validator.js"></script>
+        <script>
+            const validator = new Validator();
+            validator.init({
+                form: "#form_create-class",
+                rules: [validator.isRequired("#name"), validator.isRequired("#price"), validator.isRequired("#startAt")],
+            });
+        </script>
+    </body>
+</html>

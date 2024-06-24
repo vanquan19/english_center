@@ -1,4 +1,3 @@
-const { Op } = require("sequelize");
 const db = require("../models");
 const handleImage = require("../util/handleImage");
 
@@ -9,6 +8,10 @@ const defaultBanner = [
     },
     {
         image: "/images/banner3.webp",
+        content: "Banner 2",
+    },
+    {
+        image: "/images/banner1.jpg",
         content: "Banner 2",
     },
 ];
@@ -49,7 +52,7 @@ const handleGetBanner = async (req, res) => {
             });
         }
         dataResponse = [...dataResponse, ...defaultBanner];
-        return dataResponse;
+        return res.json(dataResponse);
     } catch (error) {
         return [];
     }

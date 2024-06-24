@@ -1,4 +1,4 @@
-const handleOpen = (targetId, animaionShow, animationHide, delay = 300) => {
+const handleOpen = (targetId, animaionShow, animationHide, delay = 300, type) => {
     const target = document.getElementById(targetId);
     if (target.getAttribute("data-open") === "true") {
         target.classList.add(animationHide);
@@ -8,6 +8,9 @@ const handleOpen = (targetId, animaionShow, animationHide, delay = 300) => {
             target.setAttribute("data-open", "false");
         }, delay - 50);
     } else {
+        if (type) {
+            target.classList.add(type);
+        }
         target.classList.remove("hidden");
         target.classList.add(animaionShow);
         target.setAttribute("data-open", "true");
@@ -29,5 +32,18 @@ const handleControlPage = (type, curent, href) => {
         window.location.href = `${href}/${pageCurent}`;
     } else {
         window.location.href = href;
+    }
+};
+
+const hiddenPassword = (id, btn1, btn2) => {
+    const input = document.getElementById(id);
+    const buttonShow = document.getElementById(btn1);
+    const buttonHide = document.getElementById(btn2);
+    buttonShow.classList.toggle("hidden");
+    buttonHide.classList.toggle("hidden");
+    if (input.type === "password") {
+        input.type = "text";
+    } else {
+        input.type = "password";
     }
 };

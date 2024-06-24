@@ -11,6 +11,18 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            Class.belongsTo(models.Teacher, {
+                foreignKey: "teacherID",
+                as: "teacher",
+            });
+            Class.hasMany(models.ClassSession, {
+                foreignKey: "classID",
+                as: "classSession",
+            });
+            Class.hasMany(models.Student, {
+                foreignKey: "classID",
+                as: "students",
+            });
         }
     }
     Class.init(
@@ -23,16 +35,28 @@ module.exports = (sequelize, DataTypes) => {
             name: DataTypes.STRING,
             year: DataTypes.INTEGER,
             startAt: DataTypes.DATE,
+            endAt: DataTypes.DATE,
             status: DataTypes.BOOLEAN,
             price: DataTypes.FLOAT,
-            teacherID: DataTypes.INTEGER,
+            teacherID: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Teachers",
+                    key: "id",
+                },
+            },
         },
         {
             sequelize,
-            timestamps: false,
+            timestamps: true,
             tableName: false,
             modelName: "Class",
             tableName: "Classes",
+            hooks: {
+                afterCreate: (classInstance, options) => {
+                    console.log("Class was created");
+                },
+            },
         }
     );
     return Class;

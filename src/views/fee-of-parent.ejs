@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Học phí, Lệ phí học sinh - Trung tâm tiếng anh</title>
+        <link rel="stylesheet" href="App.css" />
+        <style>
+            /* For WebKit-based browsers (Chrome, Safari) */
+            .no-scrollbar::-webkit-scrollbar {
+                display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+            }
+
+            /* For Firefox */
+            .no-scrollbar {
+                scrollbar-width: none; /* Hide scrollbar for Firefox */
+            }
+
+            /* For Internet Explorer 10+ */
+            .no-scrollbar {
+                -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+            }
+
+            /* Additional styling for the container */
+            .content {
+                overflow-y: scroll; /* Enable vertical scrolling */
+                height: 200px; /* Set a height for demonstration purposes */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="app">
+            <%- include('parent-header') %>
+            <div class="mt-16">
+                <div class="p-8">
+                    <% fees.forEach((fee) => { %>
+                    <h1 class="text-center text-xl font-bold">
+                        <span><%= fee.student['user.firstname'] %> <%= fee.student['user.lastname'] %></span>
+                        - <%= fee.student['classes.name'] %> năm <%= fee.student['classes.year']%>
+                    </h1>
+                    <h1 class="text-center text-xl font-bold">Tổng học phí phải đóng <span class="text-primary-600"><%= fee.sumFee %></span></h1>
+                    <div class="relative py-4 flex md:flex-row flex-col justify-between">
+                        <!-- paid amount -->
+                        <div class="relative overflow-x-auto w-full md:pr-4 md:border-primary-600 md:border-r-2 min-h-72">
+                            <h1 class="font-bold text-gray-900 text-xl text-center my-2">Số tiền đã đóng (<%= fee.sumPaid %>VND)</h1>
+                            <table class="w-full text-sm text-left border-gray-600 rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-50 uppercase bg-primary-600 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="px-3 py-3 border border-gray-600">STT</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-600">Ngày</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-600">Số tiền</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-600">Loại tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% fee.feePaid.forEach((paid, index) => { %>
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                        <td class="px-4 py-4 border border-gray-600"><%= index + 1 %></td>
+                                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-600">
+                                            <%= paid.paidDate.getDate() %>/<%= paid.paidDate.getMonth() + 1%>/<%= paid.paidDate.getFullYear() %>
+                                        </th>
+                                        <td class="px-6 py-4 border border-gray-600"><%= paid.paid %></td>
+                                        <td class="px-6 py-4 border border-gray-600">Học phí tháng: <%= paid.monthOfYear %>/<%= paid.year%></td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- amount remaining to be paid -->
+                        <div class="relative overflow-x-auto w-full md:pl-4 md:border-primary-600 md:border-l-2 min-h-72">
+                            <h1 class="font-bold text-gray-900 text-xl text-center my-2">Số tiền Phải đóng (<%= fee.sumFeeNotPaid %>VND)</h1>
+                            <button
+                                type="button"
+                                onclick="submitPayment('<%= fee.student.id%>')"
+                                class="absolute right-0 top-0 p-3 bg-primary-600 rounded-lg font-bold text-white uppercase text-xs hover:bg-primary-700 transition-all">
+                                Đóng học phí
+                            </button>
+                            <table id="table-fee-not-pays" class="w-full text-sm text-left border border-gray-600 rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-50 uppercase bg-primary-600 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="px-3 py-3 border border-gray-600">Chọn</th>
+                                        <th scope="col" class="px-3 py-3 border border-gray-600">STT</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-600">Tháng</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-600">Số tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% fee.feeNotPaid.forEach((paid, index) => { %>
+                                    <tr class="bg-white dark:bg-gray-800 dark:border-gray-700">
+                                        <td class="p-2 w-9 font-medium text-center text-gray-900 whitespace-nowrap dark:text-white border border-gray-600">
+                                            <input type="checkbox" />
+                                        </td>
+                                        <td class="p-2 w-9 font-medium text-center text-gray-900 whitespace-nowrap dark:text-white border border-gray-600"><%= index %></td>
+                                        <td scope="row" class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-600"><%= paid.month %>/<%= paid.year %></td>
+                                        <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-600">
+                                            <%= paid['class.price'] * paid.count * (100 - fee.student.discount)/100 %>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="relative overflow-x-auto w-full min-h-72">
+                        <h1 class="font-bold text-gray-900 text-xl text-center my-2">Học phí các tháng</h1>
+                        <table class="w-full text-sm text-left border-gray-600 rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-50 uppercase bg-primary-600 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-3 py-3 border border-gray-600">STT</th>
+                                    <th scope="col" class="px-6 py-3 border border-gray-600">Tháng</th>
+                                    <th scope="col" class="px-6 py-3 border border-gray-600">Số tiền</th>
+                                    <th scope="col" class="px-6 py-3 border border-gray-600">Số tiền đã giảm</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% fee.listFeeOfMonth.forEach((feeOfMonth, index) => { %>
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                    <td class="px-4 py-4 border border-gray-600"><%= index + 1 %></td>
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-600">
+                                        <%= feeOfMonth.month %>/<%= feeOfMonth.year%>
+                                    </th>
+                                    <td class="px-6 py-4 border border-gray-600"><%= feeOfMonth.count * feeOfMonth['class.price']%></td>
+                                    <td class="px-6 py-4 border border-gray-600"><%= feeOfMonth.count * feeOfMonth['class.price'] * (100 - fee.student.discount)/100 %></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% }) %>
+                </div>
+                <%- include('footer') %>
+                <!-- model submit fee -->
+                <!-- Main modal -->
+                <div id="modal-fees" data-open="false" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 z-50 justify-center items-center w-screen md:inset-0 h-screen">
+                    <form class="relative m-auto p-4 w-full max-w-2xl max-h-full">
+                        <!-- Modal content -->
+                        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
+                            <!-- Modal header -->
+                            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Thanh toán học phí</h3>
+                                <button
+                                    type="button"
+                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                    onclick="handleOpen('modal-fees', 'animate-facein', 'animate-hiddenout', 300)">
+                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                    </svg>
+                                    <span class="sr-only">Close modal</span>
+                                </button>
+                            </div>
+                            <!-- Modal body -->
+                            <div class="p-4 md:p-5 space-y-4">
+                                <div class="grid gap-6 mb-6 md:grid-cols-1">
+                                    <div class="relative">
+                                        <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nhập số tiền</label>
+                                        <input
+                                            type="text"
+                                            id="cash"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            placeholder="1000000"
+                                            required />
+                                        <span class="text-sm text-red-500 absolute top-full error_cash"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                                <button
+                                    id="btn_submit-payment"
+                                    data-modal-hide="static-modal"
+                                    type="button"
+                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    Thanh toán
+                                </button>
+                                <button
+                                    type="button"
+                                    onclick="handleOpen('modal-fees', 'animate-facein', 'animate-hiddenout', 300)"
+                                    class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                                    Hủy bỏ
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- model payment -->
+        <section id="modal_payment" data-open="false" class="body-font hidden overflow-y-scroll fixed top-0 right-0 w-screen z-50 h-screen bg-gray-100 pt-10 text-gray-600 no-scrollbar">
+            <button
+                type="button"
+                class="text-white font-extrabold fixed right-0 top-0 hover:bg-red-800 transition-all bg-red-700 border-l-4 border-b-4 border-red-800 block text-center rounded-bl-2xl rounded-br-2x text-sm px-4 py-2 ms-auto justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                onclick="handleOpen('modal_payment', 'animate-facein', 'animate-hiddenout', 300)">
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <div class="container m-auto mt-10 flex max-w-3xl flex-wrap justify-center rounded-lg bg-white px-5 py-24">
+                <!-- QR Code Number Account & Uploadfile -->
+                <div class="flex-wrap md:flex">
+                    <div class="mx-auto">
+                        <img class="mx-auto mt-12 h-52 w-52 rounded-lg border p-2 md:mt-0" src="/images/qr_code.png" alt="step" />
+                        <div>
+                            <h1 class="font-laonoto mt-4 text-center text-xl font-bold">Người thụ hưởng: LO VAN QUAN</h1>
+                            <p class="mt-2 text-center font-semibold text-gray-600">Số tài khoản: 0379404699</p>
+                            <p class="mt-2 text-center font-semibold text-gray-600 total_cash"></p>
+                            <p class="mt-1 text-center font-medium text-red-500">Nội dung: Mã Học viên + Tháng-Năm</p>
+                        </div>
+                        <!-- component -->
+
+                        <button onclick="handlePayment()" class="mx-auto block rounded-md border bg-blue-500 px-6 py-2 my-4 text-white outline-none">Xác nhận</button>
+                    </div>
+                    <!-- Step Checkout -->
+                    <div class="mt-8 max-w-sm md:mt-0 md:ml-10 md:w-2/3">
+                        <div class="relative flex pb-12">
+                            <div class="absolute inset-0 flex h-full w-10 items-center justify-center">
+                                <div class="pointer-events-none h-full w-1 bg-gray-200"></div>
+                            </div>
+                            <div class="relative z-10 inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-white">
+                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="h-5 w-5" viewBox="0 0 24 24">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-grow pl-4">
+                                <h2 class="title-font mb-1 text-sm font-medium tracking-wider text-gray-900">Bước 1</h2>
+                                <p class="font-laonoto leading-relaxed">Quét mã QR code hoặc chuyển khoản qua số tài khoản</p>
+                            </div>
+                        </div>
+                        <div class="relative flex pb-12">
+                            <div class="absolute inset-0 flex h-full w-10 items-center justify-center">
+                                <div class="pointer-events-none h-full w-1 bg-gray-200"></div>
+                            </div>
+                            <div class="relative z-10 inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-white">
+                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="h-5 w-5" viewBox="0 0 24 24">
+                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-grow pl-4">
+                                <h2 class="title-font mb-1 text-sm font-medium tracking-wider text-gray-900">Bước 2</h2>
+                                <p class="font-laonoto leading-relaxed">Ấn xác nhận</p>
+                            </div>
+                        </div>
+                        <div class="relative flex pb-12">
+                            <div class="relative z-10 inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-white">
+                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="h-5 w-5" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="5" r="3"></circle>
+                                    <path d="M12 22V8M5 12H2a10 10 0 0020 0h-3"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-grow pl-4">
+                                <h2 class="title-font mb-1 text-sm font-medium tracking-wider text-gray-900">Bước 3</h2>
+                                <p class="font-laonoto leading-relaxed">Hệ thống sẽ tự động cập nhật học phí cho học viên sau khi nhận được thông báo chuyển khoản</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script src="/script.js"></script>
+        <script src="/script/validator.js"></script>
+        <script>
+            const data = [];
+            let inputCash = null;
+            let studentID;
+            const submitPayment = (student) => {
+                studentID = +student;
+                const tableRows = document.querySelectorAll("#table-fee-not-pays tbody tr");
+                tableRows.forEach((row) => {
+                    const checkbox = row.querySelector("input[type='checkbox']");
+                    if (checkbox.checked) {
+                        const monthYear = row.cells[2].innerText.split("/");
+                        const month = monthYear[0];
+                        const year = monthYear[1];
+                        const cash = row.cells[3].innerText;
+                        data.push({ month, year, cash });
+                    }
+                });
+                if (data.length === 0) {
+                    window.alert("Vui lòng chọn tháng cần đóng học phí");
+                    return;
+                }
+                handleOpen("modal-fees", "animate-facein", "animate-hiddenout", 300, "flex");
+            };
+            const btnSubmitPayment = document.getElementById("btn_submit-payment");
+            btnSubmitPayment.addEventListener("click", () => {
+                const cash = document.getElementById("cash").value;
+                if (!cash) {
+                    const errElement = document.querySelector(".error_cash");
+                    errElement.innerText = "Vui lòng nhập số tiền";
+                    errElement.parentElement.querySelector("input").addEventListener("input", () => {
+                        errElement.innerText = "";
+                    });
+                    return;
+                }
+                inputCash = cash;
+                const totalCash = document.querySelector(".total_cash");
+                totalCash.innerText = `Tổng số tiền cần chuyển: ${cash} VNĐ`;
+                handleOpen("modal-fees", "animate-facein", "animate-hiddenout", 300);
+                handleOpen("modal_payment", "animate-facein", "animate-hiddenout", 300);
+            });
+
+            const handlePayment = () => {
+                fetch("/api/create-fee", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ data, cash: inputCash, studentID: studentID }),
+                })
+                    .then((res) => res.json())
+                    .then((res) => {
+                        if (res.status === "ok") {
+                            window.location.reload();
+                        } else {
+                            window.alert("Thanh toán thất bại");
+                        }
+                    });
+            };
+        </script>
+    </body>
+</html>

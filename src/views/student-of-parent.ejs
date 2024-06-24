@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Thông tin học sinh - Trung tâm tiếng anh</title>
+        <link rel="stylesheet" href="App.css" />
+    </head>
+    <body>
+        <div class="app">
+            <%- include('parent-header') %>
+            <div class="mt-20">
+                <div class="p-8 pb-12 flex flex-col gap-4">
+                    <% classSession.forEach((session) => { %>
+                    <div class="flex flex-col w-full p-4 bg-white border border-gray-200 rounded-lg shadow md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                        <div class="w-full min-w-60 h-full">
+                            <h5 class="mb-2 text-2xl w-full text-center font-bold tracking-tight text-gray-900 dark:text-white">Thông tin chung</h5>
+                            <h1 class="text-base font-semibold text-gray-900">
+                                Họ tên học sinh: <span class="font-normal text-base"> <%= session.student['user.firstname'] %> <%= session.student['user.lastname'] %></span>
+                            </h1>
+                            <h1 class="text-base font-semibold text-gray-900">Email: <span class="font-normal text-base"> <%= session.student['user.email'] %> </span></h1>
+                            <h1 class="text-base font-semibold text-gray-900">Số điện thoại: <span class="font-normal text-base"> <%= session.student['user.phone'] %> </span></h1>
+                            <h1 class="text-base font-semibold text-gray-900">Ngày sinh: <span class="font-normal text-base"> <%= session.student['user.birthday'] %></span></h1>
+                            <h1 class="text-base font-semibold text-gray-900">
+                                Tên giảng viên:
+                                <span class="font-normal text-base"> <%= session.student['classes.teacher.user.firstname'] %> <%= session.student['classes.teacher.user.lastname'] %></span>
+                            </h1>
+                            <h1 class="text-base font-semibold text-gray-900">
+                                Số điện thoại giảng viên: <span class="font-normal text-base"> <%= session.student['classes.teacher.user.phone'] %></span>
+                            </h1>
+                            <h1 class="text-base font-semibold text-gray-900">
+                                Email thoại giảng viên: <span class="font-normal text-base"> <%= session.student['classes.teacher.user.email'] %></span>
+                            </h1>
+                            <h1 class="text-base font-semibold text-gray-900">Thổng số buổi học: <span class="font-normal text-base"> <%= session.session.length %> buổi </span></h1>
+                            <h1 class="text-base font-semibold text-gray-900">Đã Hoành thành: <span class="font-normal text-base"> <%= session.attendance.length %> buổi</span></h1>
+                            <h1 class="text-base font-semibold text-gray-900">
+                                Đã nghỉ: <span class="font-normal text-base"> <%= session.attendance.filter(item => item.status === 0).length %> buổi</span>
+                            </h1>
+                        </div>
+                        <div class="flex flex-col px-4 md:my-0 my-4 w-full leading-normal md:border-l border-gray-400">
+                            <h5 class="mb-2 text-2xl w-full text-center font-bold tracking-tight text-gray-900 dark:text-white">Ca học hoàn thành</h5>
+                            <div class="relative overflow-x-auto">
+                                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3">Ngày học</th>
+                                            <th scope="col" class="px-6 py-3">Ca học</th>
+                                            <th scope="col" class="px-6 py-3">Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% session.attendance.forEach((item) => { %>
+                                        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                <%= item['classSession.date'].getDate() %>-<%= item['classSession.date'].getMonth() %>-<%= item['classSession.date'].getFullYear() %>
+                                            </th>
+                                            <td class="px-6 py-4"><%= item['classSession.shift'] %></td>
+                                            <td class="px-6 py-4"><%= item.status ? "Hoàn thành" : "Vắng mặt" %></td>
+                                        </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col px-4 md:my-0 my-4 w-full leading-normal border-gray-400">
+                        <h5 class="mb-2 text-2xl w-full text-center font-bold tracking-tight text-gray-900 dark:text-white">Tất cả ca học</h5>
+                        <div class="relative overflow-x-auto">
+                            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">Ngày học</th>
+                                        <th scope="col" class="px-6 py-3">Ca học</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% session.session.forEach((item) => { %>
+                                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            <%= item.date.getDate() %>-<%= item.date.getMonth() %>-<%= item.date.getFullYear() %>
+                                        </th>
+                                        <td class="px-6 py-4"><%= item.shift %></td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+                <%- include('footer') %>
+            </div>
+        </div>
+
+        <script src="/script.js"></script>
+    </body>
+</html>

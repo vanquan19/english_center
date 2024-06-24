@@ -1,11 +1,11 @@
-const { eachDayOfInterval } = require("date-fns");
+const { eachDayOfInterval, set } = require("date-fns");
 const db = require("../models/index");
 const { handleCreateBanner } = require("./banner");
-const { handleAddEvent } = require("../services/class-service");
+
+// handle create class
 const handleCreateClass = async (req, res) => {
     try {
-        const { name, year, startAt, price, content, shift, day, endDate } =
-            req.body;
+        const { name, year, startAt, price, content, shift, day, endDate } = req.body;
         let image = "";
         if (req.file) {
             image = req.file.buffer.toString("base64");
@@ -14,6 +14,7 @@ const handleCreateClass = async (req, res) => {
             name: name,
             year: year,
             startAt: new Date(startAt),
+            endAt: new Date(endDate),
             status: true,
             price: parseFloat(price),
         });
@@ -21,74 +22,153 @@ const handleCreateClass = async (req, res) => {
             handleCreateBanner(image, content, startAt);
         }
         if (shift && day.length > 0) {
-            await handleAddEvent(data.id, day, shift, startAt, endDate);
+            const start = new Date(startAt);
+            const end = new Date(endDate);
+
+            if (start > end) {
+                throw new Error("Start date must be before end date");
+            }
+            const allDays = eachDayOfInterval({
+                start: start,
+                end: end,
+            });
+
+            allDays.forEach(async (item) => {
+                const dayOfWeek = item.getDay();
+                if (day.includes(dayOfWeek.toString())) {
+                    await db.ClassSession.create({
+                        classID: +data.id,
+                        date: item,
+                        shift: shift,
+                    });
+                }
+            });
         }
         setTimeout(() => {
-            res.redirect("/class-management/1");
+            res.redirect("/class-management");
         }, 500);
     } catch (error) {
         console.log(error);
-        res.redirect("/create-class");
+        res.redirect("/error");
     }
 };
 
+// handle get list class
 const handleGetClass = async (req, res) => {
-    const limit = 7;
-    const page = req.params.page || 1;
+    const limit = 10;
+    let { page = 1 } = req.query;
+    page = parseInt(page);
     const offset = (page - 1) * limit;
     const { count, rows } = await db.Class.findAndCountAll({
         limit: limit,
         offset: offset,
+        include: [
+            {
+                model: db.Teacher,
+                as: "teacher",
+                include: [
+                    {
+                        model: db.User,
+                        as: "user",
+                        attributes: ["firstname", "lastname"],
+                    },
+                ],
+            },
+        ],
+        order: [
+            ["createdAt", "DESC"],
+            ["name", "ASC"],
+            ["year", "DESC"],
+        ],
+        raw: true,
     });
-    res.render("class-management", {
-        page: "class-management",
-        _class: rows,
+
+    const listClass = await Promise.all(
+        rows.map(async (item) => {
+            const numStudent = await db.Student.count({
+                where: {
+                    classID: item.id,
+                },
+            });
+            return { numStudent, ...item };
+        })
+    );
+
+    res.render("list-class", {
+        page: "class",
+        _class: listClass,
         count: count,
         totalPage: Math.ceil(count / limit),
         currentPage: page,
+        title: "Danh sách lớp học",
+        auth: req.session.isAuth.DT,
     });
 };
 
+// handle get class detail
 const handleGetClassById = async (req, res) => {
-    const { id } = req.params;
-    const data = await db.Class.findOne({
+    const { id } = req.query;
+    const infoClass = await db.Class.findOne({
         where: {
             id: id,
         },
-    });
-    const students = await db.Student.findAll({
-        where: {
-            classID: data.id,
-        },
-    });
-    const listStudentPromises = students.map(async (item, index) => {
-        const student = await db.User.findOne({
-            where: {
-                id: item.userID,
+        include: [
+            {
+                model: db.Teacher,
+                as: "teacher",
+                attributes: [],
+                include: [
+                    {
+                        model: db.User,
+                        as: "user",
+                        attributes: ["firstname", "lastname", "email", "phone"],
+                    },
+                ],
             },
-            attributes: [
-                "firstname",
-                "lastname",
-                "email",
-                "phone",
-                "address",
-                "gender",
-                "birthday",
-            ],
-        });
-        return { id: item.id, ...student };
+        ],
+        raw: true,
     });
-    const listStudent = await Promise.all(listStudentPromises);
+    const listStudent = await db.Student.findAll({
+        where: {
+            classID: +infoClass.id,
+        },
+        include: [
+            {
+                model: db.User,
+                as: "user",
+                attributes: ["firstname", "lastname", "email", "phone", "address", "birthday", "gender"],
+            },
+        ],
+        raw: true,
+    });
+
+    const listTeacher = await db.Teacher.findAll({
+        include: [
+            {
+                model: db.User,
+                as: "user",
+                attributes: ["firstname", "lastname"],
+            },
+        ],
+        attributes: ["id"],
+        raw: true,
+    });
+    const alert = { ...req.session.alert };
+    req.session.alert = null;
     setTimeout(() => {
         res.render("class-detail", {
-            dataClass: data,
+            alert: alert,
+            dataClass: infoClass,
             students: listStudent,
-            page: "class-management",
+            teachers: listTeacher,
+            title: "Thông tin lớp học",
+            page: "class-detail",
+            auth: req.session.isAuth.DT,
         });
-    }, 500);
+    }, 200);
 };
 
-// handle management celender for class
+// handle management celender for class - chưa xác định
 const handleManagementCalendar = async (req, res) => {
     const { id, month, year } = req.query;
     const data = await db.Class.findOne({
@@ -128,11 +208,7 @@ const handleManagementCalendar = async (req, res) => {
         const getMonth = item.getMonth();
         const year = item.getFullYear();
         const listEvent = classSession.filter((session) => {
-            return (
-                session.date.getDate() === date &&
-                session.date.getMonth() === getMonth &&
-                session.date.getFullYear() === year
-            );
+            return session.date.getDate() === date && session.date.getMonth() === getMonth && session.date.getFullYear() === year;
         });
         if (listEvent.length > 0) {
             listDayOfEvent.push(...listEvent);
@@ -161,31 +237,79 @@ const handleGetInfomationClass = async (req, res) => {
             id: id,
         },
     });
-    const teacher = await db.Teacher.findOne({
-        where: {
-            id: _class.teacherID,
-        },
-    });
-    const teacherInfo = await db.User.findOne({
-        where: {
-            id: teacher.userID,
-        },
-        attributes: [
-            "firstname",
-            "lastname",
-            "email",
-            "phone",
-            "address",
-            "gender",
-            "birthday",
-        ],
-    });
-
+    let infoTeacher = {};
+    if (_class.teacherID) {
+        const teacher = await db.Teacher.findOne({
+            where: {
+                id: _class.teacherID,
+            },
+        });
+        infoTeacher = await db.User.findOne({
+            where: {
+                id: teacher.userID,
+            },
+            attributes: ["firstname", "lastname", "email", "phone", "address", "gender", "birthday"],
+        });
+    }
     res.render("genaral-class-infomation", {
         page: "class-management",
         dataClass: _class,
-        teacher: teacherInfo,
+        teacher: { id: _class.teacherID, ...infoTeacher },
     });
+};
+
+// handle update class
+
+const handleUpdateClass = async (req, res) => {
+    try {
+        const { id, name, year, price, teacherID } = req.body;
+
+        await db.Class.update(
+            {
+                name: name,
+                year: year,
+                price: parseFloat(price),
+                teacherID: teacherID,
+            },
+            {
+                where: {
+                    id: id,
+                },
+            }
+        );
+
+        req.session.alert = { success: "Cập nhật thông tin lớp học thành công!" };
+        setTimeout(() => {
+            res.redirect("/class-detail?id=" + id);
+        }, 200);
+    } catch (error) {
+        console.log(error);
+        res.redirect("/error");
+    }
+};
+
+// handle close class
+const handleCloseClass = async (req, res) => {
+    try {
+        const { id } = req.query;
+        await db.Class.update(
+            {
+                status: false,
+            },
+            {
+                where: {
+                    id: id,
+                },
+            }
+        );
+        req.session.alert = { success: "Đóng lớp học thành công!" };
+        setTimeout(() => {
+            res.redirect("/class-detail?id=" + id);
+        }, 200);
+    } catch (error) {
+        console.log(error);
+        res.redirect("/error");
+    }
 };
 
 module.exports = {
@@ -194,4 +318,6 @@ module.exports = {
     handleGetClassById,
     handleManagementCalendar,
     handleGetInfomationClass,
+    handleUpdateClass,
+    handleCloseClass,
 };

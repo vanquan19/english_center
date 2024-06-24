@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            Fee.belongsTo(models.Student, {
+                foreignKey: "studentID",
+                as: "student",
+            });
         }
     }
     Fee.init(
@@ -22,14 +26,14 @@ module.exports = (sequelize, DataTypes) => {
             },
             fee: DataTypes.FLOAT,
             paid: DataTypes.FLOAT,
-            outDate: DataTypes.DATE,
+            monthOfYear: DataTypes.STRING,
+            year: DataTypes.STRING,
             paidDate: DataTypes.DATE,
-            discount: DataTypes.FLOAT,
             studentID: DataTypes.INTEGER,
         },
         {
             sequelize,
-            timestamps: false,
+            timestamps: true,
             tableName: "Fees",
             modelName: "Fee",
         }

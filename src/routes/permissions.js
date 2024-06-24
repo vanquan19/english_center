@@ -2,7 +2,7 @@ const db = require("../models");
 
 const checkRole = (role) => {
     return async (req, res, next) => {
-        if (role !== req.user.role) {
+        if (role !== req.session.isAuth.DT.role) {
             res.send("You are not allowed to access this page");
         } else {
             next();

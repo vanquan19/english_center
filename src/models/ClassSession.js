@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            ClassSession.belongsTo(models.Class, {
+                foreignKey: "classID",
+                as: "class",
+            });
+            ClassSession.hasMany(models.Attendance, {
+                foreignKey: "classSessionID",
+                as: "attendances",
+            });
         }
     }
     ClassSession.init(
@@ -20,7 +28,13 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true,
             },
-            classID: DataTypes.INTEGER,
+            classID: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "classes",
+                    key: "id",
+                },
+            },
             date: DataTypes.DATE,
             shift: DataTypes.STRING,
         },

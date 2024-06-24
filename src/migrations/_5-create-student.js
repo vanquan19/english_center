@@ -34,6 +34,11 @@ module.exports = {
                     key: "id",
                 },
             },
+            discount: {
+                type: DataTypes.FLOAT,
+                defaultValue: 0,
+                notNull: true,
+            },
         });
     },
     async down(queryInterface, Sequelize) {
