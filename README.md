@@ -3,7 +3,7 @@
 
 ## Yêu cầu
 
-- [Node.js](https://nodejs.org/) (v20.9.0)
+- [Node.js](https://nodejs.org/en/blog/release/v20.9.0) (v20.9.0)
 - [npm](https://www.npmjs.com/) (9.8.1)
 
 ## Cài đặt
